@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
             var pokemons = json.decode(snapshot.data.toString());
             return ListView.builder(
               itemBuilder: (BuildContext context,int index){
+                var colors = pokemons[index]["color"].split(',');
                 return GestureDetector(
                   onTap: () {
                     var id = (index+1).toString().padLeft(3, '0');
@@ -59,24 +60,40 @@ class _HomePageState extends State<HomePage> {
                       context, '${Routes.detailpage}?id=$id',
                       transition: TransitionType.inFromRight
                     );
-                    // Navigator.push(context,
-                    //   MaterialPageRoute(builder: (context) => DetailPage((index+1).toString()))
-                    // );
                   },
                   child: Card(
-                    color: Colors.yellow[500],
+                    color: new Color.fromARGB(255, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
                     elevation: 5.0,
                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                    child: Row(
+                      // crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text((index+1).toString() + pokemons[index]["name"]["chinese"]),
+                        new Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            new Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new Container(
+                                  margin: const EdgeInsets.only(top: 0, left: 30.0),
+                                  child: new Text((index+1).toString().padLeft(3, '0')),
+                                ),
+                                new Container(
+                                  margin: const EdgeInsets.only(top: 0, left: 45.0),
+                                  child: new Text(pokemons[index]["name"]["chinese"]),
+                                ),
+                              ],
+                            ),
+                            new TypeBar(pokemons[index]["type"]),
+                          ],
+                        ),
                         new Image.asset(
                           'assets/sprites/'+ (index+1).toString().padLeft(3, '0') + 'MS.png',
-                          width: 50.0,
-                          height: 50.0,
+                          width: 75.0,
+                          height: 75.0,
                           fit: BoxFit.contain,
-                          alignment: Alignment.bottomRight,
+                          alignment: Alignment.centerRight,
                         ),
                       ],
                     ),
@@ -108,7 +125,7 @@ class DetailPage extends StatelessWidget {
           loadString('data/pokemon.json'),
           builder: (context,snapshot){
             var detail = json.decode(snapshot.data.toString())[int.parse(id)-1];
-            print(detail['base']);
+            print(detail);
             return new Container(
               child: Column (
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,6 +137,7 @@ class DetailPage extends StatelessWidget {
                     fit: BoxFit.contain,
                     alignment: Alignment.center,
                   ),
+                  new SpecieCard(detail['species']),
                   new StatsCard(detail['base']),
                 ]
               ),
@@ -127,6 +145,23 @@ class DetailPage extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class SpecieCard extends StatelessWidget {
+  final String species;
+  const SpecieCard(this.species);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Card(
+      child: Column (
+        crossAxisAlignment : CrossAxisAlignment.start,
+        children: <Widget>[
+          new Text(species)
+        ],
+      )
     );
   }
 }
@@ -161,24 +196,47 @@ class StatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      width: 150,
+      width: double.infinity,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          new OutlineButton (
-            child: new Text(statText),
-            onPressed: null,
-            shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.only(
-                topLeft: const Radius.circular(40.0),
-                bottomLeft: const Radius.circular(40.0),
-              )
-            )
+          new Padding(
+            padding: EdgeInsets.only(left: 5.0),
+            child: new Container(
+              width: stat/120*300,
+              child: new OutlineButton (
+                onPressed: (){},
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(40.0),
+                    bottomLeft: const Radius.circular(40.0),
+                  )
+                ),
+                child: new Text(statText),
+              ),
+            ),
           ),
-          new Text(stat.toString()),
+          Padding(
+            padding: EdgeInsets.only(right: 15.0),
+            child: new Text(stat.toString()),
+          ),
         ]
       )
     );
   }
 }
 
+class TypeBar extends StatelessWidget {
+  final List Types;
+  const TypeBar(this.Types);
 
+  @override
+  Widget build(BuildContext context) {
+    return new Row(children: Types.map((item) => 
+      new Container(
+        margin: const EdgeInsets.only(top: 0, left: 30.0),
+        child: new Text(item),
+      ),
+    ).toList());
+  }
+}
