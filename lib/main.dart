@@ -61,41 +61,47 @@ class _HomePageState extends State<HomePage> {
                       transition: TransitionType.inFromRight
                     );
                   },
-                  child: Card(
-                    color: new Color.fromARGB(255, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
-                    elevation: 5.0,
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                    child: Row(
-                      // crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        new Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new Container(
-                                  margin: const EdgeInsets.only(top: 0, left: 30.0),
-                                  child: new Text((index+1).toString().padLeft(3, '0')),
-                                ),
-                                new Container(
-                                  margin: const EdgeInsets.only(top: 0, left: 45.0),
-                                  child: new Text(pokemons[index]["name"]["english"]),
-                                ),
-                              ],
+                  child: new Padding(
+                    padding: EdgeInsets.all(2.0),
+                    child: Card(
+                      color: new Color.fromARGB(255, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
+                      elevation: 5.0,
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+                      child: Row(
+                        // crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              new Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  new Container(
+                                    margin: const EdgeInsets.only(top: 0, left: 30.0),
+                                    child: new Text((index+1).toString().padLeft(3, '0')),
+                                  ),
+                                  new Container(
+                                    margin: const EdgeInsets.only(top: 0, left: 45.0),
+                                    child: new Text(pokemons[index]["name"]["english"]),
+                                  ),
+                                ],
+                              ),
+                              new TypeBar(pokemons[index]["type"]),
+                            ],
+                          ),
+                          new Padding(
+                            padding: EdgeInsets.all(5.0),
+                            child: new Image.asset(
+                              'assets/images/'+ (index+1).toString().padLeft(3, '0') + '.png',
+                              width: 75.0,
+                              height: 75.0,
+                              fit: BoxFit.contain,
+                              alignment: Alignment.centerRight,
                             ),
-                            new TypeBar(pokemons[index]["type"]),
-                          ],
-                        ),
-                        new Image.asset(
-                          'assets/sprites/'+ (index+1).toString().padLeft(3, '0') + 'MS.png',
-                          width: 75.0,
-                          height: 75.0,
-                          fit: BoxFit.contain,
-                          alignment: Alignment.centerRight,
-                        ),
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -175,7 +181,6 @@ class SpecieCard extends StatelessWidget {
         crossAxisAlignment : CrossAxisAlignment.start,
         children: <Widget>[
           new Text(species),
-          new Text(description),
           new Text(description),
           new Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -262,7 +267,7 @@ class TypeBar extends StatelessWidget {
         child: Chip(
           label: Text(type),
           // labelStyle: textTheme.caption,
-          backgroundColor: new Color.fromARGB(125, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
+          backgroundColor: new Color.fromARGB(150, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
         ),
       );
     }).toList();
