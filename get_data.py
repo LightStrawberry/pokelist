@@ -22,11 +22,10 @@ for p in pokemons:
     minutia_key = driver.find_elements(By.XPATH, '//*[@id="detail-view"]/div[2]/div/div/div[2]/div/strong')
     minutia_value = driver.find_elements(By.XPATH, '//*[@id="detail-view"]/div[2]/div/div/div[2]/div/span')
     for n in range(len(minutia_key)):
-        profile[minutia_key[n].get_attribute('textContent')] = minutia_value[n].get_attribute('textContent')
+        profile[minutia_key[n].get_attribute('textContent')[:-1]] = minutia_value[n].get_attribute('textContent')
 
     colors = driver.find_element_by_xpath('//*[@id="detail-view"]/div[2]/div/div/div[1]/div[2]/div[2]/div[1]/span[2]/div[1]').get_attribute('style')
     color = colors.split(';')[0][16:-1]
-    print(color)
 
     p['species'] = species
     p['description'] = description
@@ -36,5 +35,5 @@ for p in pokemons:
 driver.quit()
 
 raw = json.dumps(pokemons)
-input = open("data/pokemon1.json","w")
+input = open("data/pokemon.json","w")
 input.write(raw)
