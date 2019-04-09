@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                                 children: <Widget>[
                                   new Container(
                                     margin: const EdgeInsets.only(top: 0, left: 30.0),
-                                    child: new Text((index+1).toString().padLeft(3, '0')),
+                                    child: new Text('#'+(index+1).toString().padLeft(3, '0')),
                                   ),
                                   new Container(
                                     margin: const EdgeInsets.only(top: 0, left: 45.0),
