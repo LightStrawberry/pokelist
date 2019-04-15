@@ -115,9 +115,157 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class DetailPage extends StatelessWidget {
+// class EmailScreen extends StatelessWidget{
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Email'),),
+//     );
+//   }
+// }
+
+class DetailPage extends StatefulWidget {
   final String id;
   const DetailPage(this.id);
+
+  @override
+  State<StatefulWidget> createState() => _DetailState(id);
+}
+
+class _DetailState extends State<DetailPage> with SingleTickerProviderStateMixin {
+  // final String id;
+  // const _DetailState(this.id);
+  String id;
+  _DetailState(String id){  // 有参构造函数，
+    this.id = id;
+  }
+
+  final _bottomNavigationColor = Colors.blue;
+  int _currentIndex = 0;
+  var _controller = PageController(
+    initialPage: 0,
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        controller: _controller,
+        children: <Widget>[
+          DetailStatPage(id),
+          SkillStatPage(id),
+        ],
+        // 可以左右滑动
+        // physics: NeverScrollableScrollPhysics(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                color: _bottomNavigationColor,
+              ),
+              title: Text(
+                'HOME',
+                style: TextStyle(color: _bottomNavigationColor),
+              )),
+              BottomNavigationBarItem(
+              icon: Icon(
+                Icons.email,
+                color: _bottomNavigationColor,
+              ),
+              title: Text(
+                'SKILL',
+                style: TextStyle(color: _bottomNavigationColor),
+              )),
+        ],
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          _controller.jumpToPage(index);
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+class SkillStatPage extends StatelessWidget {
+  final String id;
+  const SkillStatPage(this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(
+        title: Text('Skill'),
+      ),
+      body: new Center(
+        child: FutureBuilder(
+          future: DefaultAssetBundle.
+          of(context).
+          loadString('data/moves.json'),
+          builder: (context,snapshot){
+            var detail = json.decode(snapshot.data.toString())[int.parse(id)-1];
+            print(detail);
+            return new Container(
+              child: Column (
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  new Image.asset(
+                    'assets/images/'+ id + '.png',
+                    width: 100.0,
+                    height: 100.0,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
+                  new SkillList('learn', detail['moves']['learn']),
+                ]
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SkillList extends StatelessWidget {
+  final String names;
+  final List shkils;
+  const SkillList(this.names, this.shkils);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> list = new List<Widget>();
+    for(var i = 0; i < shkils.length; i++){
+      list.add(
+        new Row(
+          children: <Widget>[
+            new Text(shkils[i]['lv']),
+            new Text(shkils[i]['name']),
+            new Text(shkils[i]['type']), 
+          ]
+        )
+      );
+    }
+    return new Card(
+      child: Column(children: list),
+    );
+  }
+}
+
+
+class DetailStatPage extends StatelessWidget {
+  final String id;
+  const DetailStatPage(this.id);
 
   @override
   Widget build(BuildContext context) {
