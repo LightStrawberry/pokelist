@@ -55,7 +55,8 @@ class _HomePageState extends State<HomePage> {
                 var colors = pokemons[index]["color"].split(',');
                 return GestureDetector(
                   onTap: () {
-                    var id = (index+1).toString().padLeft(3, '0');
+                    // var id = (index+1).toString().padLeft(3, '0');
+                    var id = (index+1).toString();
                     Routes.router.navigateTo(
                       context, '${Routes.detailpage}?id=$id',
                       transition: TransitionType.inFromRight
@@ -211,22 +212,19 @@ class SkillStatPage extends StatelessWidget {
         child: FutureBuilder(
           future: DefaultAssetBundle.
           of(context).
-          loadString('data/moves.json'),
+          loadString('data/skill/'+ id +'.json'),
           builder: (context,snapshot){
-            var detail = json.decode(snapshot.data.toString())[int.parse(id)-1];
+            var detail = json.decode(snapshot.data.toString());
             print(detail);
             return new Container(
               child: Column (
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  new Image.asset(
-                    'assets/images/'+ id + '.png',
-                    width: 100.0,
-                    height: 100.0,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                  ),
-                  new SkillList('learn', detail['moves']['learn']),
+                  new LearnSkillList(detail['moves']['learn']),
+                  new EggSkillList(detail['moves']['egg']),
+                  new TmSkillList(detail['moves']['tm']),
+                  // new SkillList('tutor', detail['moves']['tutor']),
+                  // new SkillList('transfer', detail['moves']['transfer']),
                 ]
               ),
             );
@@ -237,10 +235,9 @@ class SkillStatPage extends StatelessWidget {
   }
 }
 
-class SkillList extends StatelessWidget {
-  final String names;
+class LearnSkillList extends StatelessWidget {
   final List shkils;
-  const SkillList(this.names, this.shkils);
+  const LearnSkillList(this.shkils);
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +247,52 @@ class SkillList extends StatelessWidget {
         new Row(
           children: <Widget>[
             new Text(shkils[i]['lv']),
+            new Text(shkils[i]['name']),
+            new Text(shkils[i]['type']), 
+          ]
+        )
+      );
+    }
+    return new Card(
+      child: Column(children: list),
+    );
+  }
+}
+
+class EggSkillList extends StatelessWidget {
+  final List shkils;
+  const EggSkillList(this.shkils);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> list = new List<Widget>();
+    for(var i = 0; i < shkils.length; i++){
+      list.add(
+        new Row(
+          children: <Widget>[
+            new Text(shkils[i]['name']),
+            new Text(shkils[i]['type']), 
+          ]
+        )
+      );
+    }
+    return new Card(
+      child: Column(children: list),
+    );
+  }
+}
+
+class TmSkillList extends StatelessWidget {
+  final List shkils;
+  const TmSkillList(this.shkils);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> list = new List<Widget>();
+    for(var i = 0; i < shkils.length; i++){
+      list.add(
+        new Row(
+          children: <Widget>[
             new Text(shkils[i]['name']),
             new Text(shkils[i]['type']), 
           ]
@@ -276,16 +319,17 @@ class DetailStatPage extends StatelessWidget {
         child: FutureBuilder(
           future: DefaultAssetBundle.
           of(context).
-          loadString('data/pokemon.json'),
+          loadString('data/pokemon/'+ id +'.json'),
           builder: (context,snapshot){
-            var detail = json.decode(snapshot.data.toString())[int.parse(id)-1];
+            var detail = json.decode(snapshot.data.toString());
             print(detail);
+            var pid = id.padLeft(3, '0');
             return new Container(
               child: Column (
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   new Image.asset(
-                    'assets/images/'+ id + '.png',
+                    'assets/images/'+ pid + '.png',
                     width: 100.0,
                     height: 100.0,
                     fit: BoxFit.contain,
