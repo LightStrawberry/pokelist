@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
+import 'dart:async' show Future;
+import 'package:flutter/services.dart' show rootBundle;
 import './routes.dart';
+import './entity/pokemon.dart';
 
 void main() {
   ///初始化并配置路由
@@ -205,39 +208,73 @@ class SkillStatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
-        title: Text('Skill'),
-      ),
-      body: new Center(
-        child: FutureBuilder(
-          future: DefaultAssetBundle.
-          of(context).
-          loadString('data/skill/'+ id +'.json'),
-          builder: (context,snapshot){
-            var detail = json.decode(snapshot.data.toString());
-            print(detail);
-            return new Container(
-              child: Column (
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  new LearnSkillList(detail['moves']['learn']),
-                  new EggSkillList(detail['moves']['egg']),
-                  new TmSkillList(detail['moves']['tm']),
-                  // new SkillList('tutor', detail['moves']['tutor']),
-                  // new SkillList('transfer', detail['moves']['transfer']),
-                ]
-              ),
-            );
-          },
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('Skill'),
+      // ),
+      body: new Container(
+        margin: const EdgeInsets.only(top: 30.0),
+        child: new Center(
+          child: FutureBuilder(
+            future: DefaultAssetBundle.
+            of(context).
+            loadString('data/skill/'+ id +'.json'),
+            builder: (context,snapshot){
+              var detail = json.decode(snapshot.data.toString());
+              print(detail);
+              return new SingleChildScrollView(
+                child: Column (
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    new Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2, // 20%
+                          child: RaisedButton(
+                            onPressed: () => debugPrint('clicked'),
+                            child: const Text('lv'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2, // 20%
+                          child: RaisedButton(
+                            onPressed: () => debugPrint('clicked2'),
+                            child: const Text('2'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2, // 20%
+                          child: RaisedButton(
+                            onPressed: () {},
+                            child: const Text('3'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2, // 20%
+                          child: RaisedButton(
+                            onPressed: () {},
+                            child: const Text('4'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    new SkillList(detail['moves']['learn']),
+                    // new SkillList('tutor', detail['moves']['tutor']),
+                    // new SkillList('transfer', detail['moves']['transfer']),
+                  ]
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 }
 
-class LearnSkillList extends StatelessWidget {
+class SkillList extends StatelessWidget {
   final List shkils;
-  const LearnSkillList(this.shkils);
+  const SkillList(this.shkils);
 
   @override
   Widget build(BuildContext context) {
@@ -246,65 +283,40 @@ class LearnSkillList extends StatelessWidget {
       list.add(
         new Row(
           children: <Widget>[
-            new Text(shkils[i]['lv']),
-            new Text(shkils[i]['name']),
-            new Text(shkils[i]['type']), 
+            new Container(
+              // padding: const EdgeInsets.only(bottom: 8.0),
+              child: new Text(
+                shkils[i]['lv'],
+                style: new TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            new Padding(
+              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+              child: new Text(shkils[i]['name']),
+            ),
+            new Padding(
+              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+              child: Chip(
+                label: Text(shkils[i]['type']),
+                // labelStyle: textTheme.caption,
+                // backgroundColor: new Color.fromARGB(150, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
+              ),
+            ),
+            // new Text(shkils[i]['type']),
           ]
         )
       );
     }
-    return new Card(
+    return new Container(
+      padding: const EdgeInsets.all(32.0),
       child: Column(children: list),
     );
   }
 }
 
-class EggSkillList extends StatelessWidget {
-  final List shkils;
-  const EggSkillList(this.shkils);
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> list = new List<Widget>();
-    for(var i = 0; i < shkils.length; i++){
-      list.add(
-        new Row(
-          children: <Widget>[
-            new Text(shkils[i]['name']),
-            new Text(shkils[i]['type']), 
-          ]
-        )
-      );
-    }
-    return new Card(
-      child: Column(children: list),
-    );
-  }
-}
-
-class TmSkillList extends StatelessWidget {
-  final List shkils;
-  const TmSkillList(this.shkils);
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> list = new List<Widget>();
-    for(var i = 0; i < shkils.length; i++){
-      list.add(
-        new Row(
-          children: <Widget>[
-            new Text(shkils[i]['name']),
-            new Text(shkils[i]['type']), 
-          ]
-        )
-      );
-    }
-    return new Card(
-      child: Column(children: list),
-    );
-  }
-}
-
+// Future<String> _loadAsset(fileName) async {
+//   return await rootBundle.loadString(fileName);
+// }
 
 class DetailStatPage extends StatelessWidget {
   final String id;
@@ -312,35 +324,55 @@ class DetailStatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
-        title: Text('Detail'),
-      ),
-      body: new Center(
-        child: FutureBuilder(
-          future: DefaultAssetBundle.
-          of(context).
-          loadString('data/pokemon/'+ id +'.json'),
-          builder: (context,snapshot){
-            var detail = json.decode(snapshot.data.toString());
-            print(detail);
-            var pid = id.padLeft(3, '0');
-            return new Container(
-              child: Column (
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  new Image.asset(
-                    'assets/images/'+ pid + '.png',
-                    width: 100.0,
-                    height: 100.0,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                  ),
-                  new SpecieCard(detail['species'], detail['description'], detail['profile']),
-                  new StatsCard(detail['base']),
-                ]
-              ),
-            );
-          },
+    int n = 0;
+
+    // String jsonString = _loadAsset('data/pokemon/'+ id +'.json').toString();
+    // print(jsonString);
+    // print('1111');
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('Detail'),
+      // ),
+      body: new Container(
+        margin: const EdgeInsets.only(top: 30.0),
+        child: new Center(
+          child: FutureBuilder(
+            future: DefaultAssetBundle.of(context).loadString('data/pokemon/'+ id +'.json'),
+            builder: (context, snapshot){
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('Press button to start.');
+                case ConnectionState.active:
+                case ConnectionState.waiting:
+                  return Text('Awaiting result...');
+                case ConnectionState.done:
+                  if (snapshot.hasError)
+                    return Text('Error: ${snapshot.error}');
+                  var detail = json.decode(snapshot.data.toString());
+                  // print(detail['species']);
+                  // Map pokemonMap = json.decode(snapshot.data.toString());
+                  // Pokemon detail = Pokemon.fromJson(pokemonMap);
+                  // print(detail.name.chinese);
+                  var pid = id.padLeft(3, '0');
+                  return new Container(
+                    child: Column (
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        new Image.asset(
+                          'assets/images/'+ pid + '.png',
+                          width: 100.0,
+                          height: 100.0,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.center,
+                        ),
+                        new SpecieCard(detail['species'], detail['description'], detail['profile']),
+                        new StatsCard(detail['base']),
+                      ]
+                    ),
+                  );
+              }
+            },
+          ),
         ),
       ),
     );
@@ -357,10 +389,10 @@ class SpecieCard extends StatelessWidget {
     return <Widget>[
       new Text(profile['Height']),
       new Text(profile['Weight']),
-      new Text(profile['Catch Rate']),
-      new Text(profile['Gender Ratio']),
-      new Text(profile['Egg Groups']),
-      new Text(profile['Hatch Steps']),
+      new Text(profile['CatchRate']),
+      new Text(profile['GenderRatio']),
+      new Text(profile['EggGroups']),
+      new Text(profile['HatchSteps']),
       new Text(profile['Abilities']),
       new Text(profile['EVs']),
     ];
@@ -397,8 +429,8 @@ class StatsCard extends StatelessWidget {
           new StatsBar('HP', base['HP']),
           new StatsBar('Attack', base['Attack']),
           new StatsBar('Defense', base['Defense']),
-          new StatsBar('Sp. Attack', base['Sp. Attack']),
-          new StatsBar('Sp. Defense', base['Sp. Defense']),
+          new StatsBar('Sp. Attack', base['SpAttack']),
+          new StatsBar('Sp. Defense', base['SpDefense']),
           new StatsBar('Speed', base['Speed']),
         ],
       )
