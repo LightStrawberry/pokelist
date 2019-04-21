@@ -220,50 +220,60 @@ class SkillStatPage extends StatelessWidget {
             of(context).
             loadString('data/skill/'+ id +'.json'),
             builder: (context,snapshot){
-              var detail = json.decode(snapshot.data.toString());
-              print(detail);
-              return new SingleChildScrollView(
-                child: Column (
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    new Row(
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('Press button to start.');
+                case ConnectionState.active:
+                case ConnectionState.waiting:
+                  return Text('Awaiting result...');
+                case ConnectionState.done:
+                  if (snapshot.hasError)
+                    return Text('Error: ${snapshot.error}');
+                  var detail = json.decode(snapshot.data.toString());
+                  // print(detail);
+                  return new SingleChildScrollView(
+                    child: Column (
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Expanded(
-                          flex: 2, // 20%
-                          child: RaisedButton(
-                            onPressed: () => debugPrint('clicked'),
-                            child: const Text('lv'),
-                          ),
+                        new Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 2, // 20%
+                              child: RaisedButton(
+                                onPressed: () => debugPrint('clicked'),
+                                child: const Text('lv'),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2, // 20%
+                              child: RaisedButton(
+                                onPressed: () => debugPrint('clicked2'),
+                                child: const Text('2'),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2, // 20%
+                              child: RaisedButton(
+                                onPressed: () {},
+                                child: const Text('3'),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2, // 20%
+                              child: RaisedButton(
+                                onPressed: () {},
+                                child: const Text('4'),
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          flex: 2, // 20%
-                          child: RaisedButton(
-                            onPressed: () => debugPrint('clicked2'),
-                            child: const Text('2'),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2, // 20%
-                          child: RaisedButton(
-                            onPressed: () {},
-                            child: const Text('3'),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2, // 20%
-                          child: RaisedButton(
-                            onPressed: () {},
-                            child: const Text('4'),
-                          ),
-                        ),
-                      ],
+                        new SkillList(detail['moves']['learn']),
+                        // new SkillList('tutor', detail['moves']['tutor']),
+                        // new SkillList('transfer', detail['moves']['transfer']),
+                      ]
                     ),
-                    new SkillList(detail['moves']['learn']),
-                    // new SkillList('tutor', detail['moves']['tutor']),
-                    // new SkillList('transfer', detail['moves']['transfer']),
-                  ]
-                ),
-              );
+                  );
+              }
             },
           ),
         ),
