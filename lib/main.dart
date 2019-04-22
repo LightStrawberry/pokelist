@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
-import 'dart:async' show Future;
-import 'package:flutter/services.dart' show rootBundle;
 import './routes.dart';
-import './entity/pokemon.dart';
 
 void main() {
   ///初始化并配置路由
@@ -119,15 +116,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// class EmailScreen extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Email'),),
-//     );
-//   }
-// }
-
 class DetailPage extends StatefulWidget {
   final String id;
   const DetailPage(this.id);
@@ -163,7 +151,7 @@ class _DetailState extends State<DetailPage> with SingleTickerProviderStateMixin
         controller: _controller,
         children: <Widget>[
           DetailStatPage(id),
-          SkillStatPage(id),
+          SkillPage(id),
         ],
         // 可以左右滑动
         // physics: NeverScrollableScrollPhysics(),
@@ -202,80 +190,133 @@ class _DetailState extends State<DetailPage> with SingleTickerProviderStateMixin
   }
 }
 
-class SkillStatPage extends StatelessWidget {
+
+class SkillPage extends StatefulWidget {
   final String id;
-  const SkillStatPage(this.id);
+  const SkillPage(this.id);
+
+  @override
+  State<StatefulWidget> createState() => _SkillState(id);
+}
+
+class _SkillState extends State<SkillPage> {
+  String id;
+  _SkillState(String id){  // 有参构造函数，
+    this.id = id;
+  }
+  
+  var learnOffstage = false;
+  var tmOffstage = true;
+  var eggOffstage = true;
+  var tutorOffstage = true;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Skill'),
-      // ),
-      body: new Container(
-        margin: const EdgeInsets.only(top: 30.0),
-        child: new Center(
-          child: FutureBuilder(
-            future: DefaultAssetBundle.
-            of(context).
-            loadString('data/skill/'+ id +'.json'),
-            builder: (context,snapshot){
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Text('Press button to start.');
-                case ConnectionState.active:
-                case ConnectionState.waiting:
-                  return Text('Awaiting result...');
-                case ConnectionState.done:
-                  if (snapshot.hasError)
-                    return Text('Error: ${snapshot.error}');
-                  var detail = json.decode(snapshot.data.toString());
-                  // print(detail);
-                  return new SingleChildScrollView(
-                    child: Column (
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        new Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 2, // 20%
-                              child: RaisedButton(
-                                onPressed: () => debugPrint('clicked'),
-                                child: const Text('lv'),
-                              ),
+    return new Container(
+      margin: const EdgeInsets.only(top: 30.0),
+      child: new Center(
+        child: FutureBuilder(
+          future: DefaultAssetBundle.
+          of(context).
+          loadString('data/skill/'+ id +'.json'),
+          builder: (context,snapshot){
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Text('Press button to start.');
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Text('Awaiting result...');
+              case ConnectionState.done:
+                if (snapshot.hasError)
+                  return Text('Error: ${snapshot.error}');
+                var detail = json.decode(snapshot.data.toString());
+                // print(detail);
+                return new SingleChildScrollView(
+                  child: Column (
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      new Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 2, // 20%
+                            child: RaisedButton(
+                              // onPressed: () => debugPrint('clicked2'),
+                              onPressed: () {
+                                setState(() {
+                                  learnOffstage = true;
+                                  eggOffstage = false;
+                                  tmOffstage = false;
+                                  tutorOffstage = false;
+                                });
+                              },
+                              child: const Text('lv'),
                             ),
-                            Expanded(
-                              flex: 2, // 20%
-                              child: RaisedButton(
-                                onPressed: () => debugPrint('clicked2'),
-                                child: const Text('2'),
-                              ),
+                          ),
+                          Expanded(
+                            flex: 2, // 20%
+                            child: RaisedButton(
+                              onPressed: () {
+                                setState(() {
+                                  learnOffstage = false;
+                                  eggOffstage = true;
+                                  tmOffstage = false;
+                                  tutorOffstage = false;
+                                });
+                              },
+                              child: const Text('egg'),
                             ),
-                            Expanded(
-                              flex: 2, // 20%
-                              child: RaisedButton(
-                                onPressed: () {},
-                                child: const Text('3'),
-                              ),
+                          ),
+                          Expanded(
+                            flex: 2, // 20%
+                            child: RaisedButton(
+                              onPressed: () {
+                                setState(() {
+                                  learnOffstage = false;
+                                  eggOffstage = false;
+                                  tmOffstage = true;
+                                  tutorOffstage = false;
+                                });
+                              },
+                              child: const Text('tm'),
                             ),
-                            Expanded(
-                              flex: 2, // 20%
-                              child: RaisedButton(
-                                onPressed: () {},
-                                child: const Text('4'),
-                              ),
+                          ),
+                          Expanded(
+                            flex: 2, // 20%
+                            child: RaisedButton(
+                              onPressed: () {
+                                setState(() {
+                                  learnOffstage = false;
+                                  eggOffstage = false;
+                                  tmOffstage = false;
+                                  tutorOffstage = true;
+                                });
+                              },
+                              child: const Text('tutor'),
                             ),
-                          ],
-                        ),
-                        new SkillList(detail['moves']['learn']),
-                        // new SkillList('tutor', detail['moves']['tutor']),
-                        // new SkillList('transfer', detail['moves']['transfer']),
-                      ]
-                    ),
-                  );
-              }
-            },
-          ),
+                          ),
+                        ],
+                      ),
+                      new Offstage(
+                        offstage: learnOffstage,
+                        child: new SkillList(detail['moves']['learn']),
+                      ),
+                      new Offstage(
+                        offstage: tmOffstage,
+                        child: new SkillList(detail['moves']['tm']),
+                      ),
+                      new Offstage(
+                        offstage: eggOffstage,
+                        child: new SkillList(detail['moves']['egg']),
+                      ),
+                      new Offstage(
+                        offstage: tutorOffstage,
+                        child: new SkillList(detail['moves']['tutor']),
+                      ),
+                    ]
+                  ),
+                );
+            }
+          },
         ),
       ),
     );
@@ -293,13 +334,13 @@ class SkillList extends StatelessWidget {
       list.add(
         new Row(
           children: <Widget>[
-            new Container(
-              // padding: const EdgeInsets.only(bottom: 8.0),
-              child: new Text(
-                shkils[i]['lv'],
-                style: new TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            // new Container(
+            //   // padding: const EdgeInsets.only(bottom: 8.0),
+            //   child: new Text(
+            //     shkils[i]['lv'],
+            //     style: new TextStyle(fontWeight: FontWeight.bold),
+            //   ),
+            // ),
             new Padding(
               padding: const EdgeInsets.only(right: 8.0, left: 8.0),
               child: new Text(shkils[i]['name']),
@@ -334,11 +375,6 @@ class DetailStatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int n = 0;
-
-    // String jsonString = _loadAsset('data/pokemon/'+ id +'.json').toString();
-    // print(jsonString);
-    // print('1111');
     return Scaffold(
       // appBar: AppBar(
       //   title: Text('Detail'),
@@ -359,10 +395,6 @@ class DetailStatPage extends StatelessWidget {
                   if (snapshot.hasError)
                     return Text('Error: ${snapshot.error}');
                   var detail = json.decode(snapshot.data.toString());
-                  // print(detail['species']);
-                  // Map pokemonMap = json.decode(snapshot.data.toString());
-                  // Pokemon detail = Pokemon.fromJson(pokemonMap);
-                  // print(detail.name.chinese);
                   var pid = id.padLeft(3, '0');
                   return new Container(
                     child: Column (
