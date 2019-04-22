@@ -243,10 +243,10 @@ class _SkillState extends State<SkillPage> {
                               // onPressed: () => debugPrint('clicked2'),
                               onPressed: () {
                                 setState(() {
-                                  learnOffstage = true;
-                                  eggOffstage = false;
-                                  tmOffstage = false;
-                                  tutorOffstage = false;
+                                  learnOffstage = false;
+                                  eggOffstage = true;
+                                  tmOffstage = true;
+                                  tutorOffstage = true;
                                 });
                               },
                               child: const Text('lv'),
@@ -257,10 +257,10 @@ class _SkillState extends State<SkillPage> {
                             child: RaisedButton(
                               onPressed: () {
                                 setState(() {
-                                  learnOffstage = false;
-                                  eggOffstage = true;
-                                  tmOffstage = false;
-                                  tutorOffstage = false;
+                                  learnOffstage = true;
+                                  eggOffstage = false;
+                                  tmOffstage = true;
+                                  tutorOffstage = true;
                                 });
                               },
                               child: const Text('egg'),
@@ -271,10 +271,10 @@ class _SkillState extends State<SkillPage> {
                             child: RaisedButton(
                               onPressed: () {
                                 setState(() {
-                                  learnOffstage = false;
-                                  eggOffstage = false;
-                                  tmOffstage = true;
-                                  tutorOffstage = false;
+                                  learnOffstage = true;
+                                  eggOffstage = true;
+                                  tmOffstage = false;
+                                  tutorOffstage = true;
                                 });
                               },
                               child: const Text('tm'),
@@ -285,10 +285,10 @@ class _SkillState extends State<SkillPage> {
                             child: RaisedButton(
                               onPressed: () {
                                 setState(() {
-                                  learnOffstage = false;
-                                  eggOffstage = false;
-                                  tmOffstage = false;
-                                  tutorOffstage = true;
+                                  learnOffstage = true;
+                                  eggOffstage = true;
+                                  tmOffstage = true;
+                                  tutorOffstage = false;
                                 });
                               },
                               child: const Text('tutor'),
