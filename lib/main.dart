@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 import './routes.dart';
+import './component/pokemon_card.dart';
 
 void main() {
   ///初始化并配置路由
@@ -395,18 +396,11 @@ class DetailStatPage extends StatelessWidget {
                   if (snapshot.hasError)
                     return Text('Error: ${snapshot.error}');
                   var detail = json.decode(snapshot.data.toString());
-                  var pid = id.padLeft(3, '0');
                   return new Container(
                     child: Column (
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        new Image.asset(
-                          'assets/images/'+ pid + '.png',
-                          width: 100.0,
-                          height: 100.0,
-                          fit: BoxFit.contain,
-                          alignment: Alignment.center,
-                        ),
+                        new PokemonDetailCard(id, detail),
                         new SpecieCard(detail['species'], detail['description'], detail['profile']),
                         new StatsCard(detail['base']),
                       ]
