@@ -20,9 +20,11 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.0+1
-  fluro:
-    git: git://github.com/theyakka/fluro.git
+  fluro: ^1.5.1
   json_annotation: ^2.2.0
+  sqflite: ^1.2.0
+  path: ^1.6.4
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -54,6 +56,7 @@ flutter:
    - data/pokemon/1.json
    - data/pokemon/
    - data/skill/
+   - databases/pokedex.db
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
