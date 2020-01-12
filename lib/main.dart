@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluro/fluro.dart';
 import './routes.dart';
+import './db.dart';
 import './component/pokemon_card.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'dart:typed_data';
-import 'package:flutter/services.dart';
 
 void main() {
   ///初始化并配置路由
@@ -18,41 +14,6 @@ void main() {
       onGenerateRoute: router.generator
     )
   );
-  getDb();
-}
-
-getDb() async {
-  var databasesPath = await getDatabasesPath();
-  var path = join(databasesPath, "pokedex.db");
-
-  // Check if the database exists
-  var exists = await databaseExists(path);
-
-  if (!exists) {
-    // Should happen only the first time you launch your application
-    print("Creating new copy from asset");
-
-    // Make sure the parent directory exists
-    try {
-      await Directory(dirname(path)).create(recursive: true);
-    } catch (_) {}
-      
-    // Copy from asset
-    ByteData data = await rootBundle.load(join("databases", "pokedex.db"));
-    List<int> bytes =
-    data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    
-    // Write and flush the bytes written
-    await File(path).writeAsBytes(bytes, flush: true);
-
-  } else {
-    print("Opening existing database");
-  }
-  // open the database
-  var db = await openDatabase(path, readOnly: true);
-  print(await db.query('sqlite_master', columns: ['name']));
-  List<Map> list = await db.rawQuery('select * from pokemon');
-  print(list);
 }
 
 class MyApp extends StatelessWidget {
@@ -76,8 +37,21 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => new _HomePageState();
 }
 
+
+
 class _HomePageState extends State<HomePage> {
   List data;
+  @override
+  void initState() {
+    super.initState();
+    queryUserFromDB();
+  }
+
+  void queryUserFromDB() async {
+    var list = await DBManager().query("111");
+    data = list;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -85,74 +59,84 @@ class _HomePageState extends State<HomePage> {
         title: new Text(widget.title),
       ),
       body: new Center(
-        child: FutureBuilder(
-          future: DefaultAssetBundle.
-          of(context).
-          loadString('data/pokemon.json'),
-          builder: (context,snapshot){
-            var pokemons = json.decode(snapshot.data.toString());
-            return ListView.builder(
-              itemBuilder: (BuildContext context,int index){
-                var colors = pokemons[index]["color"].split(',');
-                return GestureDetector(
-                  onTap: () {
-                    // var id = (index+1).toString().padLeft(3, '0');
-                    var id = (index+1).toString();
-                    Routes.router.navigateTo(
-                      context, '${Routes.detailpage}?id=$id',
-                      transition: TransitionType.inFromRight
-                    );
-                  },
-                  child: new Padding(
-                    padding: EdgeInsets.all(2.0),
-                    child: Card(
-                      color: new Color.fromARGB(255, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
-                      elevation: 5.0,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                      child: Row(
-                        // crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: FutureBuilder<List<Map>>(
+          future: DBManager().query("111"),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            // 请求已结束
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                // 请求失败，显示错误
+                return Text("Error: ${snapshot.error}");
+              } else {
+                // 请求成功，显示数据
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  // itemExtent: 50.0, //强制高度为50.0
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
+                        // var id = (index+1).toString().padLeft(3, '0');
+                        var id = (index+1).toString();
+                        Routes.router.navigateTo(
+                          context, '${Routes.detailpage}?id=$id',
+                          transition: TransitionType.inFromRight
+                        );
+                      },
+                      child: new Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: Card(
+                          // color: new Color.fromARGB(255, int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2])),
+                          elevation: 5.0,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+                          child: Row(
+                            // crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              new Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              new Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
-                                  new Container(
-                                    margin: const EdgeInsets.only(top: 0, left: 30.0),
-                                    child: new Text('#'+(index+1).toString().padLeft(3, '0')),
+                                  new Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      new Container(
+                                        margin: const EdgeInsets.only(top: 0, left: 30.0),
+                                        child: new Text('#'+(index+1).toString().padLeft(3, '0')),
+                                      ),
+                                      new Container(
+                                        margin: const EdgeInsets.only(top: 0, left: 45.0),
+                                        child: new Text(snapshot.data[index]['name']),
+                                      ),
+                                    ],
                                   ),
-                                  new Container(
-                                    margin: const EdgeInsets.only(top: 0, left: 45.0),
-                                    child: new Text(pokemons[index]["name"]["english"]),
-                                  ),
+                                  // new TypeBar(snapshot.data[index]['type']),
                                 ],
                               ),
-                              new TypeBar(pokemons[index]["type"]),
+                              new Padding(
+                                padding: EdgeInsets.all(5.0),
+                                child: new Image.asset(
+                                  'assets/images/'+ (index+1).toString().padLeft(3, '0') + '.png',
+                                  width: 75.0,
+                                  height: 75.0,
+                                  fit: BoxFit.contain,
+                                  alignment: Alignment.centerRight,
+                                ),
+                              )
                             ],
                           ),
-                          new Padding(
-                            padding: EdgeInsets.all(5.0),
-                            child: new Image.asset(
-                              'assets/images/'+ (index+1).toString().padLeft(3, '0') + '.png',
-                              width: 75.0,
-                              height: 75.0,
-                              fit: BoxFit.contain,
-                              alignment: Alignment.centerRight,
-                            ),
-                          )
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                    // return ListTile(title: Text(snapshot.data[index]['name']));
+                  }
                 );
-              },
-              itemCount: pokemons == null ? 0 : pokemons.length,
-            );
+              }
+            } else {
+              // 请求未结束，显示loading
+              return CircularProgressIndicator();
+            }
           },
         ),
-      ),
+      )
     );
   }
 }

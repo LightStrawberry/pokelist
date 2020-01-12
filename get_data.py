@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 
 with open("data/pokemon.json", 'rb') as f:
     pokemons = json.loads(f.read())
-    
+
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument("--proxy-server=socks5://127.0.0.1:1080")
