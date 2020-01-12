@@ -9,10 +9,10 @@ class PokemonDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     var pid = id.padLeft(3, '0');
-    print(detail);
-    var name = detail['name']['english'];
-    var type = detail['type'];
-    var species = detail['species'];
+    // print(detail);
+    var name = detail['name'];
+    // var type = detail['type'];
+    // var species = detail['species'];
     return new Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -23,21 +23,6 @@ class PokemonDetailCard extends StatelessWidget {
           ),
           flex: 3,
         ),
-        // Column(
-        //   children: <Widget>[
-        //     Row(
-        //       children: <Widget>[
-        //         Text('111'),
-        //         Text('122')
-        //       ],
-        //     ),
-        //     Row(
-        //       children: <Widget>[
-        //         Text('111')
-        //       ],
-        //     ),
-        //   ],
-        // ),
         Expanded(
           child:
             Image.asset(

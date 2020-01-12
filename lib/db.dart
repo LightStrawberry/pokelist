@@ -63,4 +63,10 @@ class DBManager {
     // }
     return result;
   }
+
+  Future<Map> query_one(String id) async {
+    Database database = await getDatabase();
+    List<Map<String, dynamic>> result = await database.rawQuery('select * from pokemon where id = $id');
+    return result[0];
+  }
 }

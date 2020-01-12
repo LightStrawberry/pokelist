@@ -41,16 +41,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List data;
-  @override
-  void initState() {
-    super.initState();
-    queryUserFromDB();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   queryUserFromDB();
+  // }
 
-  void queryUserFromDB() async {
-    var list = await DBManager().query("111");
-    data = list;
-  }
+  // void queryUserFromDB() async {
+  //   var list = await DBManager().query("111");
+  //   data = list;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: new Center(
         child: FutureBuilder<List<Map>>(
-          future: DBManager().query("111"),
+          future: DBManager().query("all"),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // 请求已结束
             if (snapshot.connectionState == ConnectionState.done) {
@@ -189,7 +189,7 @@ class _DetailState extends State<DetailPage> with SingleTickerProviderStateMixin
                 color: _bottomNavigationColor,
               ),
               title: Text(
-                'HOME',
+                'STAT',
                 style: TextStyle(color: _bottomNavigationColor),
               )),
               BottomNavigationBarItem(
@@ -408,7 +408,8 @@ class DetailStatPage extends StatelessWidget {
         margin: const EdgeInsets.only(top: 30.0),
         child: new Center(
           child: FutureBuilder(
-            future: DefaultAssetBundle.of(context).loadString('data/pokemon/'+ id +'.json'),
+            // future: DefaultAssetBundle.of(context).loadString('data/pokemon/'+ id +'.json'),
+            future: DBManager().query_one(id),
             builder: (context, snapshot){
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
@@ -419,14 +420,14 @@ class DetailStatPage extends StatelessWidget {
                 case ConnectionState.done:
                   if (snapshot.hasError)
                     return Text('Error: ${snapshot.error}');
-                  var detail = json.decode(snapshot.data.toString());
+                  // var detail = json.decode(snapshot.data.toString());
                   return new Container(
                     child: Column (
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        new PokemonDetailCard(id, detail),
-                        new SpecieCard(detail['species'], detail['description'], detail['profile']),
-                        new StatsCard(detail['base']),
+                        new PokemonDetailCard(id, snapshot.data),
+                        // new SpecieCard(detail['species'], detail['description'], detail['profile']),
+                        new StatsCard(snapshot.data),
                       ]
                     ),
                   );
@@ -486,12 +487,12 @@ class StatsCard extends StatelessWidget {
       child: Column (
         crossAxisAlignment : CrossAxisAlignment.start,
         children: <Widget>[
-          new StatsBar('HP', base['HP']),
-          new StatsBar('Attack', base['Attack']),
-          new StatsBar('Defense', base['Defense']),
-          new StatsBar('Sp. Attack', base['SpAttack']),
-          new StatsBar('Sp. Defense', base['SpDefense']),
-          new StatsBar('Speed', base['Speed']),
+          new StatsBar('HP', base['hp']),
+          new StatsBar('Attack', base['atk']),
+          new StatsBar('Defense', base['def']),
+          new StatsBar('Sp. Attack', base['spa']),
+          new StatsBar('Sp. Defense', base['spd']),
+          new StatsBar('Speed', base['spe']),
         ],
       )
     );
