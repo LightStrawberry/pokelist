@@ -1,4 +1,5 @@
 import 'package:fluro/fluro.dart';
+import 'package:pokelist/page/detail.dart';
 import './main.dart';
 
 class Routes {
